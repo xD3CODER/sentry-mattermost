@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="sentry-mattermost",
-    version='0.0.1',
+    version='0.0.2',
     author="Nathan KREMER",
     author_email="deverlabs@gmail.com",
     description=("A Sentry plugin to send alerts to Mattermost channel."),
