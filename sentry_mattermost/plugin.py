@@ -2,10 +2,14 @@ from __future__ import absolute_import
 
 from sentry import tagstore
 from sentry.plugins.bases import notify
-from sentry.integrations import FeatureDescription, IntegrationFeatures
 from sentry_plugins.base import CorePluginMixin
 from sentry.http import safe_urlopen, is_valid_url
 from sentry.utils.safe import safe_execute
+
+try:
+    from sentry.integrations import FeatureDescription, IntegrationFeatures
+except ImportError:
+    from sentry.integrations.base import FeatureDescription, IntegrationFeatures
 
 import sentry_mattermost
 
