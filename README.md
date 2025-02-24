@@ -4,12 +4,24 @@ A Sentry plugin to send alerts to Mattermost channel.
 Based on the [Sentry-Slack](https://github.com/getsentry/sentry-slack) plugin
 
 ### Installation 
-Add the plugin to your `requirements.txt`
+
+#### Current Version
+In Sentry installation folder go to the `sentry/enhance-image.sh` (if file does not exist copy `sentry/enhance-image.example.sh`)
+Add next lines:
+```
+apt-get update && apt-get install -y git
+pip install git+https://github.com/xd3coder/sentry-mattermost.git@dev#egg=sentry-mattermost
+```
+
+#### Alternative Installation (for older sentry versions)
+Add the plugin to your `requirements.txt` (if file does not exist copy `sentry/requirements.example.txt`):
 ```
 git+https://github.com/xd3coder/sentry-mattermost.git@dev#egg=sentry-mattermost
 ```
+
+#### Configuration Steps
 - Create a new webhook in Mattermost
-- Go to `Organizations` -> `projects`
+- Go to `Organizations` -> `Projects`
 - Select the project you want then go to `Legacy integrations` -> `Mattermost`
 - Set your webhook URL
 - Add new alert rules in `Alerts` -> `New alert rule` to trigger Mattermost plugin
