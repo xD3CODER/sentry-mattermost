@@ -74,21 +74,22 @@ class Mattermost(CorePluginMixin, notify.NotificationPlugin):
             if excluded_tags and (key in excluded_tags or std_key in excluded_tags):
                 continue
             if self.get_option("include_keys_with_tags", project) :
-                tags.append("`{}: {}` ".format(tag_key.encode('utf-8'), tag_value.encode('utf-8')))
+                tags.append("`{}: {}` ".format(tag_key, tag_value))
             else:
-                tags.append("`{}` ".format(tag_value.encode('utf-8')))
+                tags.append("`{}` ".format(tag_value))
 
         data = {
-            "title": group.message_short.encode('utf-8'),
+            "title": group.message_short,
             "link": group.get_absolute_url(),
             "id": event.event_id,
-            "culprit": group.culprit.encode('utf-8'),
+            "culprit": group.culprit,
             "env": event.get_environment().name,
             "project_slug": group.project.slug,
             "project_name": group.project.name,
             "tags": " ".join(tags),
             "level": event.get_tag("level"),
-            "message": event.message, "release": event.release,
+            "message": event.message,
+            "release": event.release,
         }
 
         icon_url = "https://xd3coder.github.io/image-host/sentry-mattermost/64/warning.jpg"
