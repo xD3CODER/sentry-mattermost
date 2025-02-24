@@ -5,7 +5,7 @@ Based on the [Sentry-Slack](https://github.com/getsentry/sentry-slack) plugin
 
 ### Installation 
 
-#### Current Version
+#### Sentry versions >= 22.6.0
 In Sentry installation folder go to the `sentry/enhance-image.sh` (if file does not exist copy `sentry/enhance-image.example.sh`)
 Add next lines:
 ```
@@ -13,7 +13,7 @@ apt-get update && apt-get install -y git
 pip install git+https://github.com/xd3coder/sentry-mattermost.git@dev#egg=sentry-mattermost
 ```
 
-#### Alternative Installation (for older sentry versions)
+#### Legacy Sentry versions (<22.6.0)
 Add the plugin to your `requirements.txt` (if file does not exist copy `sentry/requirements.example.txt`):
 ```
 git+https://github.com/xd3coder/sentry-mattermost.git@dev#egg=sentry-mattermost
