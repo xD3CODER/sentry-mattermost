@@ -1,5 +1,6 @@
+import importlib.metadata
+
 try:
-    VERSION = __import__('pkg_resources') \
-        .get_distribution('sentry-mattermost').version
+    VERSION = importlib.metadata.version('sentry-mattermost')
 except Exception as e:
     VERSION = 'unknown'
