@@ -55,7 +55,12 @@ class Mattermost(CorePluginMixin, notify.NotificationPlugin):
         if customFormat:
             template = customFormat
         else:
-            template = "#### {project_name} - {env}\n{tags}\n\n{culprit}\n[{title}]({link})"
+            template = "#### [{env}] {project_name}\n" \
+                       "🔎 **[{title}]({link})**\n" \
+                       "**Tags:** {tags}\n" \
+                       "**Culprit:** `{culprit}`\n\n" \
+                       "---------------------------\n" \
+                       "{message}"
         return template.format(**data)
 
 
@@ -132,6 +137,7 @@ class Mattermost(CorePluginMixin, notify.NotificationPlugin):
                 "name": "logo_match_level",
                 "label": "Background color match notification level",
                 "type": "bool",
+                "default": True,
                 "required": False,
                 "help": "Avatar in channel will use a color according to Sentry logging level.",
             },
@@ -139,6 +145,7 @@ class Mattermost(CorePluginMixin, notify.NotificationPlugin):
                 "name": "include_keys_with_tags",
                 "label": "Include tags keys in messages",
                 "type": "bool",
+                "default": True,
                 "required": False,
                 "help": "Write keys before tags in rendered messages.",
             },
