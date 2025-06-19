@@ -10,7 +10,7 @@ In Sentry installation folder go to the `sentry/enhance-image.sh` (if file does 
 Add next lines:
 ```
 apt-get update && apt-get install -y git
-pip install git+https://github.com/xd3coder/sentry-mattermost.git@dev#egg=sentry-mattermost
+pip install git+https://github.com/xd3coder/sentry-mattermost.git@master#egg=sentry-mattermost
 ```
 
 #### Legacy Sentry versions (<22.6.0)
