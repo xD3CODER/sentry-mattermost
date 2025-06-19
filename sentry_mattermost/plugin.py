@@ -97,6 +97,7 @@ class Mattermost(CorePluginMixin, notify.NotificationPlugin):
             icon_url = "https://xd3coder.github.io/image-host/sentry-mattermost/64/" + event.get_tag("level") + ".jpg"
         payload = {
             "username": self.get_option("username", project) or "Sentry",
+            "channel": self.get_option("channel", project),
             "icon_url": icon_url,
             "text": self.render_notification(data, self.get_option("custom_format", project))
         }
@@ -119,6 +120,13 @@ class Mattermost(CorePluginMixin, notify.NotificationPlugin):
                 "default": "Sentry",
                 "required": False,
                 "help": "The name used in channel when publishing notifications.",
+            },
+            {
+                "name": "channel",
+                "label": "Channel Name",
+                "type": "string",
+                "required": False,
+                "help": "Specific channel name for notification.",
             },
             {
                 "name": "custom_format",
