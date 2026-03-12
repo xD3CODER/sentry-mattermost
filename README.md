@@ -10,7 +10,7 @@ Based on the [Sentry-Slack](https://github.com/getsentry/sentry-slack) plugin.
 - A [Sentry self-hosted](https://develop.sentry.dev/self-hosted/) instance >= 24.x
 - An incoming webhook configured in Mattermost
 
-> For older Sentry versions (< 24.x), use [version 0.0.3](https://github.com/xd3coder/sentry-mattermost/tree/v0.0.3) of the plugin.
+> For older Sentry versions (< 24.x), use [version 0.0.3](https://github.com/xD3CODER/sentry-mattermost/tree/legacy) of the plugin.
 
 ### 1. Create a webhook in Mattermost
 
