@@ -1,9 +1,7 @@
 from __future__ import absolute_import
 
-from sentry import tagstore
 from sentry.plugins.bases import notify
-from sentry_plugins.base import CorePluginMixin
-from sentry.http import safe_urlopen, is_valid_url
+from sentry.http import safe_urlopen
 from sentry.utils.safe import safe_execute
 
 try:
@@ -18,13 +16,10 @@ def get_tags(event):
     tag_list = event.tags
     if not tag_list:
         return ()
-
-    return (
-        (tagstore.get_tag_key_label(k), tagstore.get_tag_value_label(k, v)) for k, v in tag_list
-    )
+    return ((k, v) for k, v in tag_list)
 
 
-class Mattermost(CorePluginMixin, notify.NotificationPlugin):
+class Mattermost(notify.NotificationPlugin):
     title = 'Mattermost'
     slug = 'mattermost'
     description = 'Sends alerts to Mattermost channel based on Sentry alerts rules'
@@ -33,6 +28,10 @@ class Mattermost(CorePluginMixin, notify.NotificationPlugin):
     author = 'Nathan KREMER'
     author_url = 'https://github.com/xd3coder/sentry-mattermost'
     user_agent = 'sentry-webhooks/%s' % version
+    resource_links = [
+        ('Report Issue', 'https://github.com/xd3coder/sentry-mattermost/issues'),
+        ('View Source', 'https://github.com/xd3coder/sentry-mattermost'),
+    ]
     feature_descriptions = [
         FeatureDescription(
             """
@@ -58,7 +57,6 @@ class Mattermost(CorePluginMixin, notify.NotificationPlugin):
             template = "#### {project_name} - {env}\n{tags}\n\n{culprit}\n[{title}]({link})"
         return template.format(**data)
 
-
     def create_payload(self, event):
         group = event.group
         project = group.project
@@ -68,33 +66,43 @@ class Mattermost(CorePluginMixin, notify.NotificationPlugin):
         excluded_tags = set(self.get_tag_list("excluded_tag_keys", project) or [])
         for tag_key, tag_value in get_tags(event):
             key = tag_key.lower()
-            std_key = tagstore.get_standardized_key(key)
-            if included_tags and key not in included_tags and std_key not in included_tags:
+            if included_tags and key not in included_tags:
                 continue
-            if excluded_tags and (key in excluded_tags or std_key in excluded_tags):
+            if excluded_tags and key in excluded_tags:
                 continue
-            if self.get_option("include_keys_with_tags", project) :
+            if self.get_option("include_keys_with_tags", project):
                 tags.append("`{}: {}` ".format(tag_key, tag_value))
             else:
                 tags.append("`{}` ".format(tag_value))
 
+        title = getattr(group, 'title', None) or getattr(group, 'message_short', str(group))
+
+        env_name = ''
+        try:
+            env = event.get_environment()
+            if env:
+                env_name = env.name
+        except Exception:
+            env_name = event.get_tag('environment') or ''
+
         data = {
-            "title": group.message_short,
+            "title": title,
             "link": group.get_absolute_url(),
             "id": event.event_id,
             "culprit": group.culprit,
-            "env": event.get_environment().name,
-            "project_slug": group.project.slug,
-            "project_name": group.project.name,
+            "env": env_name,
+            "project_slug": project.slug,
+            "project_name": project.name,
             "tags": " ".join(tags),
             "level": event.get_tag("level"),
             "message": event.message,
-            "release": event.release,
+            "release": getattr(event, 'release', event.get_tag('sentry:release') or ''),
         }
 
         icon_url = "https://xd3coder.github.io/image-host/sentry-mattermost/64/warning.jpg"
         if self.get_option("logo_match_level", project):
-            icon_url = "https://xd3coder.github.io/image-host/sentry-mattermost/64/" + event.get_tag("level") + ".jpg"
+            level = event.get_tag("level") or "warning"
+            icon_url = "https://xd3coder.github.io/image-host/sentry-mattermost/64/" + level + ".jpg"
         payload = {
             "username": self.get_option("username", project) or "Sentry",
             "channel": self.get_option("channel", project),
@@ -155,7 +163,7 @@ class Mattermost(CorePluginMixin, notify.NotificationPlugin):
                 "label": "Included Tags",
                 "type": "string",
                 "required": False,
-                "help":  "Only include these tags (comma separated list). Leave empty to include all."
+                "help": "Only include these tags (comma separated list). Leave empty to include all."
             },
             {
                 "name": "excluded_tag_keys",
@@ -182,4 +190,4 @@ class Mattermost(CorePluginMixin, notify.NotificationPlugin):
             return
         webhook = self.get_option("webhook", project).strip()
         payload = self.create_payload(event)
-        return safe_execute(self.send_webhook(webhook, payload))
+        return safe_execute(self.send_webhook, webhook, payload)
