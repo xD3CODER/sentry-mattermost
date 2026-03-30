@@ -26,7 +26,7 @@ In your Sentry self-hosted installation folder, edit (or create) the `sentry/enh
 ```bash
 #!/bin/bash
 apt-get update && apt-get install -y git
-pip install git+https://github.com/xd3coder/sentry-mattermost.git@master#egg=sentry-mattermost
+pip install git+https://github.com/xd3coder/sentry-mattermost.git#egg=sentry-mattermost
 ```
 
 Then rebuild the image and restart:
